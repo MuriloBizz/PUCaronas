@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar</title>
+</head>
+<body>
+        <form >
+        <label for="">Nome:</label><br>
+        <input type="text" name="nome" id="nome"> 
+<br>
+                <label for="">Email:</label><br>
+        <input type="email" name="email" id="email">
+<br>
+                <label for="">Senha:</label><br>
+        <input type="password" name="senha" id="senha_hash">
+<br>
+                <label for="">Data de Nascimento:</label><br>
+        <input type="date" name="data_nasc" id="data_nasc">
+<br>
+
+                <label for="">Cargo:</label><br>
+        <select name="cargos" id="cargos">
+    <option value="admin" name="admin" id="admin">Admin</option>
+  <option value="passageiro" name="passageiro" id="passageiro">Passageiro</option>
+  <option value="motorista" name="motorista" id="motorista">Motorista</option>
+  
+
+</select>
+<br>
+
+                <label for="">Status:</label><br>
+        <input type="text" name="status" id="status">
+<br>
+
+
+
+
+                <label for="">Link documentação(crachá e CNH caso motorista):</label><br>
+        <input type="text" name="doc" id="doc">
+<br>
+<button type="button" id="btn">Enviar</button>
+<h1 id="resultado"></h1>
+</form>
+
+<script>
+
+
+
+
+           async function carregar_dados(){
+        obj = await pegar_dados(id);
+        preencher(obj);
+    }
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id = urlParams.get('id');
+    const nome = sessionStorage.getItem('nome');
+    if (!id || nome == null){
+        window.location.href = 'gerenciar.html';
+    }
+    else{
+        carregar_dados();
+    }
+
+
+
+    async function pegar_dados(id){
+                let requisicao = await fetch(`../../api/usuario.php?id=${id}` , {
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            })
+             const resposta = await requisicao.json();
+             return resposta
+    }
+
+    function preencher(obj){
+            document.getElementById('nome').value = obj.nome;
+            document.getElementById('email').value = obj.email;
+            document.getElementById('senha_hash').value = obj.senha_hash;
+            document.getElementById('data_nasc').value = obj.data_nasc;
+            var e = document.getElementById("cargos");
+            var value = e.value;
+            e.options[e.selectedIndex].text = obj.cargo;
+            document.getElementById('status').value = obj.status;
+            document.getElementById('doc').value = obj.doc;
+    }
+
+btn = document.getElementById("btn");
+btn.addEventListener('click',enviar);
+        async function enviar(){
+            try {
+            obj = {};
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha_hash = document.getElementById('senha_hash').value;
+            const data_nasc = document.getElementById('data_nasc').value;
+            var e = document.getElementById("cargos");
+            var value = e.value;
+            var cargo = e.options[e.selectedIndex].text;
+            const status = document.getElementById('status').value;
+            const doc = document.getElementById('doc').value;
+            let requisicao = await fetch(`../../api/usuario.php?id=${id}` , {
+                method: 'PUT',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({nome,email,senha_hash,data_nasc,cargo,status,doc})
+            })
+        const resposta = await requisicao.json(); 
+        console.log("Resposta:", resposta); 
+        resultado = document.getElementById('resultado')
+        if(resposta.message) { 
+            resultado.innerHTML = "Usuário atualizado com sucesso!!";
+            dormir = (tempo) => new Promise(res => setTimeout(res,tempo));
+            dormir(1000);
+            window.location.href = 'gerenciar.html';
+        }
+  } 
+            catch (err) {
+                console.log("erro é:" + err);
+                resultado.innerHTML = "Dados inválidos!!";
+
+            }
+
+
+
+}
+
+
+
+</script>
+</body>
+</html>

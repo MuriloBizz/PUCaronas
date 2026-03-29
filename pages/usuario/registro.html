@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+</head>
+<body>
+    <form >
+        <label for="">Nome:</label><br>
+        <input type="text" name="nome" id="nome"> 
+<br>
+                <label for="">Email:</label><br>
+        <input type="email" name="email" id="email">
+<br>
+                <label for="">Senha:</label><br>
+        <input type="password" name="senha" id="senha_hash">
+<br>
+                <label for="">Data de Nascimento:</label><br>
+        <input type="date" name="data_nasc" id="data_nasc">
+<br>
+
+                <label for="">Cargo:</label><br>
+        <select name="cargos" id="cargos">
+  <option value="passageiro" name="passageiro" id="passageiro">Passageiro</option>
+  <option value="motorista" name="motorista" id="motorista">Motorista</option>
+</select>
+<br>
+
+                <label for="">Link documentação(crachá e CNH caso motorista):</label><br>
+        <input type="text" name="doc" id="doc">
+<br>
+<button type="button" id="btn">Enviar</button>
+<h1 id="resultado"></h1>
+</form>
+    <script>
+        btn = document.getElementById("btn");
+        btn.addEventListener('click',enviar);
+        async function enviar(){
+            try {
+            obj = {};
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha_hash = document.getElementById('senha_hash').value;
+            const data_nasc = document.getElementById('data_nasc').value;
+            var e = document.getElementById("cargos");
+            var value = e.value;
+            var cargo = e.options[e.selectedIndex].text;
+            const doc = document.getElementById('doc').value;
+            let requisicao = await fetch('../../api/usuario.php?action=cadastro' , {
+                method: 'PUT',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({nome,email,senha_hash,data_nasc,cargo,doc})
+            })
+        const resposta = await requisicao.json(); 
+        console.log("Resposta:", resposta); 
+        resultado = document.getElementById('resultado')
+        if(resposta.message) { 
+            sessionStorage.setItem("nome", nome); 
+            resultado.innerHTML = "Usuário adicionado com sucesso!!";
+            window.location.href = 'login.html';
+        }
+  } 
+            catch (err) {
+                console.log("erro é:" + err);
+                resultado.innerHTML = "Dados inválidos!!";
+
+            }
+
+
+
+}
+    </script>
+</body>
+</html>
