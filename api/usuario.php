@@ -54,17 +54,19 @@ switch ($method) {
 
                 $email = $input['email'];
                 $senha = $input['senha_hash'];
+
                 $result = $conn->query("SELECT * FROM usuario WHERE email='$email'");
                 $user = $result->fetch_assoc();
-                if($user && $user['senha_hash'] === $senha) {
-                    echo json_encode(["message" => "Login ok", "nome" => $user['nome']]);
+                if ($user && $user['senha_hash'] === $senha && $user['cargo'] == 'admin'){
+                    echo json_encode(["message" => "adm login ok", "nome" => $user['nome'], "id" => $user['id']]);
+                }
+                else if($user && $user['senha_hash'] === $senha) {
+                    echo json_encode(["message" => "Login ok", "nome" => $user['nome'], "id" => $user['id']]);
                 } else {
                     echo json_encode(["error" => "Email ou senha inválidos"]);
                 }
                 break;
 
-        
-        
         }
         break;
 

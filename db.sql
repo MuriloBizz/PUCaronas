@@ -1,4 +1,5 @@
 drop database pucaronas;
+
 CREATE DATABASE pucaronas;
 USE pucaronas;
 CREATE TABLE usuario(
@@ -11,6 +12,8 @@ status VARCHAR(20),
 cargo ENUM('passageiro','motorista','admin'),
 doc VARCHAR(255)
 );
+INSERT INTO usuario (nome, email, senha_hash, data_nasc, status, cargo, doc) VALUES
+('ADM', 'ADM@pucpr.edu.br', 'ADM12345', '01/04/1990', 'ativo', 'admin', NULL);
 
 CREATE TABLE veiculo(
 id INT PRIMARY KEY AUTO_INCREMENT,
@@ -47,4 +50,5 @@ mensagem VARCHAR(100),
 FOREIGN KEY (id_passageiro) REFERENCES usuario(id),
 FOREIGN KEY (id_carona) REFERENCES carona(id)
 );
+
 
